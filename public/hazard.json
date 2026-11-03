@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Full Hazard",
+    "date": "2025-08-15"
+  },
+  {
+    "id": 2,
+    "name": "Partial Hazard",
+    "date": "2025-08-15"
+  },
+  {
+    "id": 3,
+    "name": "No Hazard",
+    "date": "2025-08-15"
+  },
+  {
+    "id": 4,
+    "name": "Offshore Rig",
+    "date": "2025-08-15"
+  },
+  {
+    "id": 5,
+    "name": "Onshore Rig",
+    "date": "2025-08-15"
+  },
+  {
+    "id": 6,
+    "name": "Halp Hazard",
+    "date": "2025-08-15"
+  },
+  {
+    "id": 7,
+    "name": "Semi-Submersible Rig",
+    "date": "2025-08-15"
+  },
+  {
+    "id": 8,
+    "name": "Mobile Rig",
+    "date": "2025-08-15"
+  }
+]
