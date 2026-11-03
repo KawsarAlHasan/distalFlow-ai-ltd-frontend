@@ -8,30 +8,46 @@ const CHANNELS = [
   { key: "wa", label: "WhatsApp" },
 ];
 
-export default function AddStepModal({ open, onClose, onAdd }) {
+export default function AddStepModal({ open, onClose, onAdd, loading }) {
   const [channel, setChannel] = useState("sms");
   const [wait, setWait] = useState(2);
   const [unit, setUnit] = useState("days");
   const [msg, setMsg] = useState("");
 
   const handleAdd = () => {
+    if (!msg.trim()) {
+      message.error("Please enter a message for this step");
+      return;
+    }
+
     onAdd &&
       onAdd({
         channel,
-        wait,
+        wait: Number(wait) || 0,
         unit,
-        message: msg.trim() || "New nurture message.",
+        message: msg.trim(),
+        badge: channel === "wa" ? "Growth+" : null,
       });
+
     setMsg("");
-    message.success("Step added to sequence");
+    setWait(2);
+    setUnit("days");
+    setChannel("sms");
+  };
+
+  const handleCancel = () => {
+    setMsg("");
+    setWait(2);
+    setUnit("days");
+    setChannel("sms");
     onClose();
   };
 
   return (
     <Modal
       open={open}
-      onCancel={onClose}
-      onOk={handleAdd}
+      onCancel={handleCancel}
+      footer={null}
       title={
         <div>
           <div className="text-[16px] font-semibold">Add a step</div>
@@ -40,10 +56,8 @@ export default function AddStepModal({ open, onClose, onAdd }) {
           </div>
         </div>
       }
-      okText="Add step"
-      cancelText="Cancel"
       width={460}
-      okButtonProps={{ className: "bg-[#0f6f6a] hover:!bg-[#0c5a56]" }}
+      centered
     >
       <div className="flex flex-col gap-4 pt-2">
         <div className="flex flex-col gap-1.5">
@@ -114,6 +128,27 @@ export default function AddStepModal({ open, onClose, onAdd }) {
             onChange={(e) => setMsg(e.target.value)}
           />
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="flex justify-end gap-3 px-6 py-4 -mx-6 -mb-6 mt-6 bg-gray-50 border-t border-gray-100">
+        <button
+          type="button"
+          onClick={handleCancel}
+          disabled={loading}
+          className="text-sm font-medium text-gray-600 px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors disabled:opacity-50"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={loading}
+          className="text-sm font-medium text-white bg-[#0f6f6a] hover:bg-[#0c5a56] px-5 py-2.5 rounded-xl transition-colors disabled:opacity-50"
+        >
+          {loading ? "Adding..." : "Add step"}
+        </button>
       </div>
     </Modal>
   );

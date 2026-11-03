@@ -14,6 +14,7 @@ export default function EditStepModal({
   step,
   onSave,
   onDelete,
+  loading,
 }) {
   const [channel, setChannel] = useState("sms");
   const [wait, setWait] = useState(2);
@@ -27,32 +28,67 @@ export default function EditStepModal({
       setUnit(step.unit || "days");
       setMsg(step.message || "");
     }
-  }, [step]);
+  }, [step, open]);
 
   const handleSave = () => {
+    if (!msg.trim()) {
+      message.error("Message cannot be empty");
+      return;
+    }
+
     onSave &&
       onSave({
-        ...step,
+        id: step.id,
         channel,
-        wait,
+        wait: Number(wait) || 0,
         unit,
-        message: msg.trim() || "New nurture message.",
+        message: msg.trim(),
+        badge: channel === "wa" ? "Growth+" : null,
       });
-    message.success("Step updated");
-    onClose();
   };
 
   const handleDelete = () => {
-    onDelete && onDelete(step);
-    message.success("Step removed");
-    onClose();
+    onDelete && onDelete(step.id);
   };
 
   return (
     <Modal
       open={open}
       onCancel={onClose}
-      onOk={handleSave}
+      footer={
+        <div className="flex justify-between items-center w-full px-6 py-4 -mx-6 -mb-6 mt-6 bg-gray-50 border-t border-gray-100">
+          <Popconfirm
+            title="Remove this step?"
+            okText="Remove"
+            cancelText="Cancel"
+            okButtonProps={{ danger: true }}
+            onConfirm={handleDelete}
+          >
+            <button
+              type="button"
+              disabled={loading}
+              className="text-[13px] text-red-500 hover:text-red-600 font-medium disabled:opacity-50"
+            >
+              Delete step
+            </button>
+          </Popconfirm>
+
+          <div className="flex gap-2">
+            <Button onClick={onClose} disabled={loading}>
+              Cancel
+            </Button>
+
+            <Button
+              type="primary"
+              onClick={handleSave}
+              loading={loading}
+              className="bg-[#0f6f6a] hover:!bg-[#0c5a56] border-[#0f6f6a] shadow-none"
+            >
+              Save changes
+            </Button>
+          </div>
+        </div>
+      }
       title={
         <div>
           <div className="text-[16px] font-semibold">Edit step</div>
@@ -61,57 +97,8 @@ export default function EditStepModal({
           </div>
         </div>
       }
-      okText="Save changes"
-      cancelText="Cancel"
       width={460}
-      okButtonProps={{ className: "bg-[#0f6f6a] hover:!bg-[#0c5a56]" }}
-    footer={
-  <div className="flex justify-between items-center w-full">
-    <Popconfirm
-      title="Remove this step?"
-      okText="Remove"
-      cancelText="Cancel"
-      okButtonProps={{ danger: true }}
-      onConfirm={handleDelete}
-    >
-      <button className="text-[13px] text-red-500 hover:text-red-600 font-medium">
-        Delete step
-      </button>
-    </Popconfirm>
-
-    <div className="flex gap-2">
-      <Button onClick={onClose}>
-        Cancel
-      </Button>
-
-      <Button
-        type="primary"
-        onClick={handleSave}
-        className="bg-[#0f6f6a] hover:!bg-[#0c5a56] border-[#0f6f6a] shadow-none"
-      >
-        Save changes
-      </Button>
-    </div>
-  </div>
-}
-      //   footer={(_, { OkBtn, CancelBtn }) => (
-      //     <div className="flex justify-between items-center">
-      //       <Popconfirm
-      //         title="Remove this step?"
-      //         okText="Remove"
-      //         okButtonProps={{ danger: true }}
-      //         onConfirm={handleDelete}
-      //       >
-      //         <button className="text-[13px] text-red-500 hover:text-red-600 font-medium">
-      //           Delete step
-      //         </button>
-      //       </Popconfirm>
-      //       <div className="flex gap-2">
-      //         <CancelBtn />
-      //         <OkBtn />
-      //       </div>
-      //     </div>
-      //   )}
+      centered
     >
       <div className="flex flex-col gap-4 pt-2">
         <div className="flex flex-col gap-1.5">

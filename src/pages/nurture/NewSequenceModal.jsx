@@ -1,28 +1,55 @@
 import React, { useState } from "react";
-import { Modal, Input, Select } from "antd";
+import { Modal, Input, Select, message } from "antd";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCampaignsApi } from "../../api/campaignApi";
 
-export default function NewSequenceModal({ open, onClose, onCreate }) {
+export default function NewSequenceModal({ open, onClose, onCreate, loading }) {
   const [name, setName] = useState("");
-  const [campaign, setCampaign] = useState("Dental Implants");
+  const [campaignId, setCampaignId] = useState("");
   const [startFrom, setStartFrom] = useState("template");
 
+  // Fetch real campaigns from backend
+  const { data: campaigns = [] } = useQuery({
+    queryKey: ["campaigns"],
+    queryFn: fetchCampaignsApi,
+    enabled: open,
+  });
+
+  const campaignOptions = [
+    { value: "", label: "General / No specific campaign" },
+    ...(campaigns && campaigns.length > 0
+      ? campaigns.map((c) => ({
+          value: c.id,
+          label: c.name,
+        }))
+      : [
+          { value: "Dental Implants", label: "Dental Implants" },
+          { value: "Invisalign", label: "Invisalign" },
+          { value: "Facial Aesthetics", label: "Facial Aesthetics" },
+        ]),
+  ];
+
   const handleCreate = () => {
+    if (!name.trim()) {
+      message.error("Please enter a sequence name");
+      return;
+    }
+
     onCreate &&
       onCreate({
-        name,
-        campaign,
-        startFrom,
+        name: name.trim(),
+        campaignId: campaignId || null,
+        template: startFrom,
       });
 
     setName("");
-    setCampaign("Dental Implants");
+    setCampaignId("");
     setStartFrom("template");
-    onClose();
   };
 
   const handleCancel = () => {
     setName("");
-    setCampaign("Dental Implants");
+    setCampaignId("");
     setStartFrom("template");
     onClose();
   };
@@ -53,6 +80,7 @@ export default function NewSequenceModal({ open, onClose, onCreate }) {
               size="large"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onPressEnter={handleCreate}
             />
           </div>
 
@@ -62,23 +90,10 @@ export default function NewSequenceModal({ open, onClose, onCreate }) {
             </label>
 
             <Select
-              value={campaign}
-              onChange={setCampaign}
+              value={campaignId}
+              onChange={setCampaignId}
               size="large"
-              options={[
-                {
-                  value: "Dental Implants",
-                  label: "Dental Implants",
-                },
-                {
-                  value: "Invisalign",
-                  label: "Invisalign",
-                },
-                {
-                  value: "Facial Aesthetics",
-                  label: "Facial Aesthetics",
-                },
-              ]}
+              options={campaignOptions}
             />
           </div>
 
@@ -109,17 +124,21 @@ export default function NewSequenceModal({ open, onClose, onCreate }) {
       {/* Footer */}
       <div className="flex justify-end gap-3 px-6 py-4 -mx-6 -mb-6 mt-6 bg-gray-50 border-t border-gray-100">
         <button
+          type="button"
           onClick={handleCancel}
-          className="text-sm font-medium text-gray-600 px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors"
+          disabled={loading}
+          className="text-sm font-medium text-gray-600 px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors disabled:opacity-50"
         >
           Cancel
         </button>
 
         <button
+          type="button"
           onClick={handleCreate}
-          className="text-sm font-medium text-white bg-gray-900 px-5 py-2.5 rounded-xl hover:bg-gray-800 transition-colors"
+          disabled={loading}
+          className="text-sm font-medium text-white bg-gray-900 px-5 py-2.5 rounded-xl hover:bg-gray-800 transition-colors disabled:opacity-50"
         >
-          Create
+          {loading ? "Creating..." : "Create"}
         </button>
       </div>
     </Modal>

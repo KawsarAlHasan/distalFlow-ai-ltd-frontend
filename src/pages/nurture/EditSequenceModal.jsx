@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Input, Switch, message, Popconfirm } from "antd";
+import { Modal, Input, Switch, Select, message, Popconfirm } from "antd";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCampaignsApi } from "../../api/campaignApi";
 
 export default function EditSequenceModal({
   open,
@@ -7,44 +9,60 @@ export default function EditSequenceModal({
   sequence,
   onSave,
   onDelete,
+  loading,
 }) {
   const [name, setName] = useState("");
   const [active, setActive] = useState(true);
+  const [campaignId, setCampaignId] = useState("");
+
+  const { data: campaigns = [] } = useQuery({
+    queryKey: ["campaigns"],
+    queryFn: fetchCampaignsApi,
+    enabled: open,
+  });
+
+  const campaignOptions = [
+    { value: "", label: "General / No specific campaign" },
+    ...(campaigns && campaigns.length > 0
+      ? campaigns.map((c) => ({
+          value: c.id,
+          label: c.name,
+        }))
+      : []),
+  ];
 
   useEffect(() => {
     if (sequence) {
       setName(sequence.name || "");
       setActive(sequence.active ?? true);
+      setCampaignId(sequence.campaignId || "");
     }
-  }, [sequence]);
+  }, [sequence, open]);
 
   const handleSave = () => {
-    onSave?.({
-      ...sequence,
-      name,
-      active,
-    });
+    if (!name.trim()) {
+      message.error("Sequence name cannot be empty");
+      return;
+    }
 
-    message.success("Sequence updated");
-    onClose();
+    onSave?.({
+      id: sequence.id,
+      name: name.trim(),
+      active,
+      campaignId: campaignId || null,
+    });
   };
 
   const handleDelete = () => {
-    onDelete?.(sequence);
-    message.success("Sequence deleted");
-    onClose();
-  };
-
-  const handleCancel = () => {
-    onClose();
+    onDelete?.(sequence.id);
   };
 
   return (
     <Modal
       open={open}
-      onCancel={handleCancel}
+      onCancel={onClose}
       footer={null}
-      width={420}
+      width={440}
       centered
       title={<span className="text-[16px] font-semibold">Edit Sequence</span>}
     >
@@ -59,6 +77,20 @@ export default function EditSequenceModal({
             placeholder="Sequence name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            onPressEnter={handleSave}
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-[13px] font-medium text-slate-700">
+            Linked Campaign
+          </label>
+
+          <Select
+            value={campaignId}
+            onChange={setCampaignId}
+            size="large"
+            options={campaignOptions}
           />
         </div>
 
@@ -78,29 +110,38 @@ export default function EditSequenceModal({
       <div className="flex justify-between items-center px-6 py-4 -mx-6 -mb-6 mt-6 bg-gray-50 border-t border-gray-100">
         <Popconfirm
           title="Delete this sequence?"
+          description="All steps in this sequence will also be removed."
           okText="Delete"
           cancelText="Cancel"
           okButtonProps={{ danger: true }}
           onConfirm={handleDelete}
         >
-          <button className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors">
+          <button
+            type="button"
+            disabled={loading}
+            className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors disabled:opacity-50"
+          >
             Delete sequence
           </button>
         </Popconfirm>
 
         <div className="flex gap-2">
           <button
-            onClick={handleCancel}
-            className="text-sm font-medium text-gray-600 px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors"
+            type="button"
+            onClick={onClose}
+            disabled={loading}
+            className="text-sm font-medium text-gray-600 px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
 
           <button
+            type="button"
             onClick={handleSave}
-            className="text-sm font-medium text-white bg-gray-900 px-5 py-2.5 rounded-xl hover:bg-gray-800 transition-colors"
+            disabled={loading}
+            className="text-sm font-medium text-white bg-gray-900 px-5 py-2.5 rounded-xl hover:bg-gray-800 transition-colors disabled:opacity-50"
           >
-            Save Changes
+            {loading ? "Saving..." : "Save Changes"}
           </button>
         </div>
       </div>
