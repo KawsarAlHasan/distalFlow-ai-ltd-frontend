@@ -1,37 +1,22 @@
 import { useState } from "react";
-import { Outlet, NavLink, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   Layout,
   Input,
   Avatar,
   Badge,
   Drawer,
-  Button,
   Dropdown,
-  Divider,
   Tag,
 } from "antd";
 import {
-  RiDashboardLine,
-  RiFilterLine,
-  RiBroadcastLine,
-  RiMessage2Line,
-  RiCalendarLine,
-  RiBarChartLine,
-  RiBankCardLine,
-  RiSettings3Line,
-  RiLogoutBoxLine,
-  RiBellLine,
-  RiSearchLine,
   RiMenuLine,
-  RiCloseLine,
+  RiSearchLine,
 } from "react-icons/ri";
 
-const { Sider, Header, Content } = Layout;
+const { Header } = Layout;
 
-import { Link } from "react-router-dom";
 import {
-  MenuOutlined,
   UserOutlined,
   LogoutOutlined,
   BellOutlined,
@@ -56,10 +41,9 @@ export default function HeaderContent({ setMobileOpen }) {
     if (path === "/bookings") return "Bookings";
     if (path === "/reports") return "Reports";
     if (path === "/billing") return "Billing & Plan";
-    if (path === "/settings") return "settings";
+    if (path === "/settings") return "Settings";
     return "Dashboard";
   };
-
 
   const [drawerVisible, setDrawerVisible] = useState(false);
   const { adminProfile, refetch } = useAdmin();
@@ -76,6 +60,9 @@ export default function HeaderContent({ setMobileOpen }) {
     signOutAdmin();
   };
 
+  const userAvatar = adminProfile?.profilePic || adminProfile?.profile_image;
+  const clinicDisplay = adminProfile?.clinic?.name || adminProfile?.clinicName || adminProfile?.roleName || "Clinic Admin";
+
   const profileMenuItems = [
     {
       key: "adminProfile",
@@ -84,15 +71,16 @@ export default function HeaderContent({ setMobileOpen }) {
           <div className="flex gap-3 items-start">
             <Avatar
               size={50}
-              src={adminProfile?.profile_image}
+              src={userAvatar}
               icon={<UserOutlined />}
+              className="border border-gray-200"
             />
             <div>
-              <h1 className="text-[#242424] text-[16px] font-bold mb-1">
-                {adminProfile?.name}
+              <h1 className="text-[#242424] text-[15px] font-bold mb-1">
+                {adminProfile?.name || "Clinic Doctor"}
               </h1>
-              <Tag color="blue" className="m-0">
-                {adminProfile?.roleName}
+              <Tag color="gold" className="m-0 text-xs">
+                {clinicDisplay}
               </Tag>
             </div>
           </div>
@@ -118,7 +106,7 @@ export default function HeaderContent({ setMobileOpen }) {
       label: (
         <div
           onClick={handleSignOut}
-          className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
+          className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer text-red-600"
         >
           <LogoutOutlined /> Logout
         </div>
@@ -142,7 +130,7 @@ export default function HeaderContent({ setMobileOpen }) {
       <div className="distalFlo-header-search">
         <Input
           prefix={<RiSearchLine size={14} color="#aaa" />}
-          placeholder="Search leads, campaigns, clinics..."
+          placeholder="Search leads, campaigns, clinic..."
           bordered={false}
           style={{
             background: "#f7f7f7",
@@ -177,16 +165,16 @@ export default function HeaderContent({ setMobileOpen }) {
             <div className="flex items-center gap-3 cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <Avatar
                 size="large"
-                src={adminProfile?.profile_image}
+                src={userAvatar}
                 icon={<UserOutlined />}
                 className="border-2 border-gray-200 hover:border-orange-400 transition-colors"
               />
-              <div className="hidden md:block ">
+              <div className="hidden md:block">
                 <div className="text-[#242424] text-[14px] font-semibold leading-tight">
-                  {adminProfile?.name}
+                  {adminProfile?.name || "Clinic Doctor"}
                 </div>
                 <div className="text-[12px] text-gray-500 leading-tight">
-                  {adminProfile?.roleName}
+                  {clinicDisplay}
                 </div>
               </div>
               <div className="hidden md:block">
@@ -194,7 +182,7 @@ export default function HeaderContent({ setMobileOpen }) {
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
-                  className="w-5 h-5"
+                  className="w-5 h-5 text-gray-400"
                 >
                   <path
                     fillRule="evenodd"
@@ -206,23 +194,6 @@ export default function HeaderContent({ setMobileOpen }) {
             </div>
           </Dropdown>
         </div>
-        {/* <Badge dot color="#C9A84C" offset={[-2, 2]}>
-          <button className="distalFlo-bell-btn" aria-label="Notifications">
-            <RiBellLine size={19} color="#555" />
-          </button>
-        </Badge>
-        <Avatar
-          size={32}
-          style={{
-            background: "#C9A84C",
-            color: "#1a1510",
-            fontWeight: 700,
-            fontSize: 12,
-            cursor: "pointer",
-          }}
-        >
-          AP
-        </Avatar> */}
 
         {/* Drawer for notifications */}
         <Drawer
