@@ -6,7 +6,6 @@ import { Switch, Spin } from "antd";
 import { FiPlus, FiEye, FiEdit2, FiCopy, FiPlay, FiInfo } from "react-icons/fi";
 import { FaMeta } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa";
-import NewCampainModal from "./NewCampainModal";
 import EditCampainModal from "./EditCampainModal";
 
 // ---------- Fake data ----------
@@ -191,7 +190,11 @@ function CampaignCard({ campaign }) {
 // ---------- Main component ----------
 function Campaigns() {
   const navigate = useNavigate();
-  const { data: dbCampaigns, isLoading, refetch } = useQuery({
+  const {
+    data: dbCampaigns,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["campaigns"],
     queryFn: fetchCampaignsApi,
   });
@@ -246,7 +249,6 @@ function Campaigns() {
               <FiPlus size={14} />
               New Campaign
             </button>
-            <NewCampainModal onSuccess={refetch} />
           </div>
         </div>
 

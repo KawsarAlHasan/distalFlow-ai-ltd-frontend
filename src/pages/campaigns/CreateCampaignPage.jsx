@@ -81,11 +81,7 @@ export default function CreateCampaignPage() {
       "No charge. No obligation. Tell us what you'd like to achieve and we'll guide you through your options.",
     formButtonText: "Claim my free consultation",
     formCallbackText: "We'll call you within 5 minutes — Mon to Sat, 8am–8pm.",
-    formGuarantees: [
-      "Completely free",
-      "No hard sell",
-      "We'll reply promptly",
-    ],
+    formGuarantees: ["Completely free", "No hard sell", "We'll reply promptly"],
     clinicLocations: ["Oxford", "Didcot"],
     aiGreeting:
       "Hi, this is Bright Smile Dental calling about your dental implant enquiry. Is now a good time for a quick chat?",
@@ -578,7 +574,7 @@ export default function CreateCampaignPage() {
       message.error(
         err?.response?.data?.message ||
           err?.message ||
-          "Failed to create campaign. Please check inputs."
+          "Failed to create campaign. Please check inputs.",
       );
     } finally {
       setSubmitting(false);
@@ -586,7 +582,12 @@ export default function CreateCampaignPage() {
   };
 
   const navItems = [
-    { id: "hero", label: "1. Hero Section", required: true, icon: HiOutlineSparkles },
+    {
+      id: "hero",
+      label: "1. Hero Section",
+      required: true,
+      icon: HiOutlineSparkles,
+    },
     { id: "navbar", label: "Header & Branding", optional: true, icon: FiGlobe },
     { id: "video", label: "Video Section", optional: true, icon: FiVideo },
     { id: "doctor", label: "Doctor Profile", optional: true, icon: FiUser },
@@ -611,7 +612,7 @@ export default function CreateCampaignPage() {
     <div className="min-h-screen bg-[#f9fafb] pb-24 text-gray-900">
       {/* Top Header / Sticky Bar */}
       <div className="sticky top-0 z-30 bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <button
               type="button"
@@ -625,7 +626,9 @@ export default function CreateCampaignPage() {
                 <span className="text-xs uppercase font-mono font-bold tracking-wider text-[#c08a2e] bg-[#fbf5e8] px-2 py-0.5 rounded">
                   New Campaign
                 </span>
-                <span className="text-xs text-gray-400">· Direct Media Upload</span>
+                <span className="text-xs text-gray-400">
+                  · Direct Media Upload
+                </span>
               </div>
               <h1 className="font-serif text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
                 {heroState.name || "Untitled Campaign"}
@@ -661,7 +664,7 @@ export default function CreateCampaignPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8">
+      <div className="px-4 sm:px-6 pt-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar Nav */}
           <div className="lg:col-span-1">
@@ -920,8 +923,8 @@ export default function CreateCampaignPage() {
                       Hero Consultation Form Card
                     </h3>
                     <p className="text-xs text-gray-400 mb-4">
-                      Customize the booking card embedded on the right side of the
-                      hero banner.
+                      Customize the booking card embedded on the right side of
+                      the hero banner.
                     </p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -1020,7 +1023,9 @@ export default function CreateCampaignPage() {
                           <div key={i} className="flex items-center gap-1.5">
                             <Input
                               value={g}
-                              onChange={(e) => updateGuarantee(i, e.target.value)}
+                              onChange={(e) =>
+                                updateGuarantee(i, e.target.value)
+                              }
                             />
                             <button
                               type="button"
@@ -1044,7 +1049,10 @@ export default function CreateCampaignPage() {
                       rows={2}
                       value={heroState.aiGreeting}
                       onChange={(e) =>
-                        setHeroState({ ...heroState, aiGreeting: e.target.value })
+                        setHeroState({
+                          ...heroState,
+                          aiGreeting: e.target.value,
+                        })
                       }
                     />
                     <p className="text-[11px] text-gray-400 mt-1">
@@ -1066,7 +1074,8 @@ export default function CreateCampaignPage() {
                     Header Navbar &amp; Clinic Logo
                   </h2>
                   <p className="text-xs text-gray-500">
-                    Directly upload your clinic logo and configure contact numbers.
+                    Directly upload your clinic logo and configure contact
+                    numbers.
                   </p>
                 </div>
 
@@ -1088,7 +1097,9 @@ export default function CreateCampaignPage() {
                             {logoFile?.name || "logo.png"}
                           </p>
                           <p className="text-xs text-gray-400">
-                            {logoFile ? `${(logoFile.size / 1024).toFixed(1)} KB` : "Uploaded logo"}
+                            {logoFile
+                              ? `${(logoFile.size / 1024).toFixed(1)} KB`
+                              : "Uploaded logo"}
                           </p>
                         </div>
                         <button
@@ -1183,12 +1194,15 @@ export default function CreateCampaignPage() {
                       Campaign Video Section
                     </h2>
                     <p className="text-xs text-gray-500">
-                      Directly upload your video file (MP4, MOV, WebM) and optional poster thumbnail.
+                      Directly upload your video file (MP4, MOV, WebM) and
+                      optional poster thumbnail.
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-500">
-                      {videoSection.show ? "Section Enabled" : "Section Disabled"}
+                      {videoSection.show
+                        ? "Section Enabled"
+                        : "Section Disabled"}
                     </span>
                     <Switch
                       checked={videoSection.show}
@@ -1370,12 +1384,15 @@ export default function CreateCampaignPage() {
                       Surgeon / Doctor Profile Section
                     </h2>
                     <p className="text-xs text-gray-500">
-                      Directly upload the doctor's portrait photo and credentials.
+                      Directly upload the doctor's portrait photo and
+                      credentials.
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-500">
-                      {doctorSection.show ? "Section Enabled" : "Section Disabled"}
+                      {doctorSection.show
+                        ? "Section Enabled"
+                        : "Section Disabled"}
                     </span>
                     <Switch
                       checked={doctorSection.show}
@@ -1590,7 +1607,8 @@ export default function CreateCampaignPage() {
                       Patient Stories &amp; Testimonials
                     </h2>
                     <p className="text-xs text-gray-500">
-                      Social proof cards with star ratings and treatment context.
+                      Social proof cards with star ratings and treatment
+                      context.
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1682,7 +1700,8 @@ export default function CreateCampaignPage() {
                     <div className="pt-4 border-t border-gray-100">
                       <div className="flex items-center justify-between mb-4">
                         <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide">
-                          Testimonial Reviews List ({testimonialsSection.testimonials.length})
+                          Testimonial Reviews List (
+                          {testimonialsSection.testimonials.length})
                         </label>
                         <button
                           type="button"
@@ -1716,7 +1735,7 @@ export default function CreateCampaignPage() {
                                       updateTestimonial(
                                         i,
                                         "highlight",
-                                        e.target.checked
+                                        e.target.checked,
                                       )
                                     }
                                   />
@@ -1756,7 +1775,7 @@ export default function CreateCampaignPage() {
                                     updateTestimonial(
                                       i,
                                       "detail",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                 />
@@ -1799,7 +1818,8 @@ export default function CreateCampaignPage() {
                       How It Works Section
                     </h2>
                     <p className="text-xs text-gray-500">
-                      A simple step-by-step roadmap guiding patients to treatment.
+                      A simple step-by-step roadmap guiding patients to
+                      treatment.
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1977,7 +1997,10 @@ export default function CreateCampaignPage() {
                         <Input
                           value={faqSection.badge}
                           onChange={(e) =>
-                            setFaqSection({ ...faqSection, badge: e.target.value })
+                            setFaqSection({
+                              ...faqSection,
+                              badge: e.target.value,
+                            })
                           }
                         />
                       </div>
@@ -1988,7 +2011,10 @@ export default function CreateCampaignPage() {
                         <Input
                           value={faqSection.title}
                           onChange={(e) =>
-                            setFaqSection({ ...faqSection, title: e.target.value })
+                            setFaqSection({
+                              ...faqSection,
+                              title: e.target.value,
+                            })
                           }
                         />
                       </div>
@@ -2016,7 +2042,10 @@ export default function CreateCampaignPage() {
                         <Input
                           value={faqSection.phone}
                           onChange={(e) =>
-                            setFaqSection({ ...faqSection, phone: e.target.value })
+                            setFaqSection({
+                              ...faqSection,
+                              phone: e.target.value,
+                            })
                           }
                         />
                       </div>
@@ -2104,7 +2133,8 @@ export default function CreateCampaignPage() {
                       Secondary Bottom CTA Form
                     </h2>
                     <p className="text-xs text-gray-500">
-                      Second opportunity for patients to convert near the footer.
+                      Second opportunity for patients to convert near the
+                      footer.
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
