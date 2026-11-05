@@ -1,30 +1,33 @@
 import { useState } from "react";
 import { Button, Modal, Form, Input, message } from "antd";
-import { SettingOutlined } from "@ant-design/icons";
+import { SettingOutlined, LockOutlined } from "@ant-design/icons";
 import { API } from "../api/api";
 
-const ChangePassword = ({ isTypeAdmin }) => {
+const ChangePassword = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
 
   const showModal = () => setIsModalOpen(true);
-  const handleCancel = () => setIsModalOpen(false);
+  const handleCancel = () => {
+    form.resetFields();
+    setIsModalOpen(false);
+  };
 
   const handleFinish = async (values) => {
     try {
       setLoading(true);
 
-      const endPoint = isTypeAdmin
-        ? "/admin/change-password"
-        : "/auth/change-password";
-
-      const res = await API.put(endPoint, {
-        current_password: values.old_password,
-        new_password: values.new_password,
+      await API.put("/auth/clinic-admin/change-password", {
+        oldPassword: values.old_password,
+        newPassword: values.new_password,
       });
+
       message.success("Password changed successfully!");
+      form.resetFields();
       setIsModalOpen(false);
     } catch (err) {
+      console.error(err);
       message.error(err.response?.data?.message || "Failed to change password");
     } finally {
       setLoading(false);
@@ -37,36 +40,58 @@ const ChangePassword = ({ isTypeAdmin }) => {
         onClick={showModal}
         className="flex items-center gap-2 px-1 py-2 cursor-pointer"
       >
-        <SettingOutlined /> Change Password
+        <SettingOutlined />
+        <span>Change Password</span>
       </div>
 
       <Modal
         title="Change Password"
         open={isModalOpen}
         onCancel={handleCancel}
-        footer={null} // we'll use Form submit button instead
+        footer={null}
+        destroyOnClose
+        width={460}
       >
-        <Form layout="vertical" onFinish={handleFinish}>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleFinish}
+          className="mt-4"
+        >
           <Form.Item
-            label="Old Password"
+            label="Current Password"
             name="old_password"
             rules={[
-              { required: true, message: "Please enter your old password" },
+              { required: true, message: "Please enter your current password" },
             ]}
           >
-            <Input.Password placeholder="Enter your old password" />
+            <Input.Password
+              prefix={<LockOutlined className="text-gray-400" />}
+              placeholder="Enter current password"
+              className="h-10 rounded-lg"
+            />
           </Form.Item>
 
           <Form.Item
             label="New Password"
             name="new_password"
-            rules={[{ required: true, message: "Please enter a new password" }]}
+            rules={[
+              { required: true, message: "New password is required" },
+              {
+                min: 6,
+                message: "Password must be at least 6 characters long",
+              },
+            ]}
           >
-            <Input.Password placeholder="Enter your new password" />
+            <Input.Password
+              prefix={<LockOutlined className="text-gray-400" />}
+              placeholder="Enter new password (min. 6 characters)"
+              className="h-10 rounded-lg"
+            />
           </Form.Item>
 
           <Form.Item
-            label="Retype New Password"
+            label="Confirm New Password"
             name="retype_new_password"
             dependencies={["new_password"]}
             rules={[
@@ -81,19 +106,23 @@ const ChangePassword = ({ isTypeAdmin }) => {
               }),
             ]}
           >
-            <Input.Password placeholder="Retype your new password" />
+            <Input.Password
+              prefix={<LockOutlined className="text-gray-400" />}
+              placeholder="Confirm new password"
+              className="h-10 rounded-lg"
+            />
           </Form.Item>
 
-          <Form.Item>
+          <Form.Item className="mt-6 mb-0">
             <Button
               type="primary"
-              className="my-main-button"
+              className="my-main-button w-full h-11 rounded-lg font-semibold"
               htmlType="submit"
               size="large"
               loading={loading}
               block
             >
-              Change Password
+              {loading ? "Updating..." : "Update Password"}
             </Button>
           </Form.Item>
         </Form>
